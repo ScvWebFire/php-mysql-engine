@@ -184,7 +184,10 @@ abstract class Processor
                 }
             }
 
-            $column = $expression->left->columnName;
+            $column = null;
+            if($expression->left instanceof ColumnExpression) {
+                $column = $expression->left->columnName;
+            }
 
             if (!isset($valid_fields[$column])) {
                 throw new ProcessorException("Invalid update column {$column}");

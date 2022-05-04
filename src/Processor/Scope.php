@@ -13,6 +13,7 @@ class Scope
      */
     public $parameters = [];
 
+    /** @param array<string, mixed> $variables */
     public function __construct(array $parameters, array $variables = [])
     {
         $this->parameters = $parameters;

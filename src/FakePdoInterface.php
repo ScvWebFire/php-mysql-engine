@@ -19,4 +19,10 @@ interface FakePdoInterface
     public function lastInsertId($seqname = null) : string;
 
     public function useStrictMode() : bool;
+
+    /** @return array<string, mixed> */
+    public function getVariables() : array;
+
+    /** @param array<string, mixed> $variables */
+    public function setVariables(array $variables) : void;
 }
