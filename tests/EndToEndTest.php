@@ -344,6 +344,33 @@ class EndToEndTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testPreviouseSetUserVariableAreRemeberd()
+    {
+        $pdo = self::getConnectionToFullDB(false);
+
+        $query = $pdo->prepare(
+            'SELECT @uservar1 := \'uservalue\';'
+        );
+
+        $query->execute();
+
+        $this->assertSame(
+            [['@uservar1 := \'uservalue\'' => 'uservalue']],
+            $query->fetchAll(\PDO::FETCH_ASSOC)
+        );
+
+        $query2 = $pdo->prepare(
+            'SELECT @uservar1;'
+        );
+
+        $query2->execute();
+
+        $this->assertSame(
+            [['@uservar1' => 'uservalue']],
+            $query2->fetchAll(\PDO::FETCH_ASSOC)
+        );
+    }
+
     public function testPreviousCurrentNextBackwardsTempVariables()
     {
         $pdo = self::getConnectionToFullDB(false);

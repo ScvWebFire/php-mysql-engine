@@ -13,8 +13,9 @@ class Scope
      */
     public $parameters = [];
 
-    public function __construct(array $parameters)
+    public function __construct(array $parameters, array $variables = [])
     {
         $this->parameters = $parameters;
+        $this->variables = $variables;
     }
 }

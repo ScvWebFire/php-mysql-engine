@@ -61,6 +61,12 @@ final class SetParser
 
                     list($this->pointer, $expression) = $expression_parser->buildWithPointer();
 
+                    if($expression instanceof BinaryOperatorExpression && $expression->operator === ':=') {
+                        $expressions[] = $expression;
+                        $this->pointer++;
+                        break;
+                    }
+
                     if (!$expression instanceof BinaryOperatorExpression || $expression->operator !== '=') {
                         throw new ParserException("Failed parsing SET clause: unexpected expression");
                     }

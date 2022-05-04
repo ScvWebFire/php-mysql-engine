@@ -47,6 +47,8 @@ final class UpdateProcessor extends Processor
             $table_definition
         );
 
+        $conn->setVariables($scope->variables);
+
         return $rows_affected;
     }
 

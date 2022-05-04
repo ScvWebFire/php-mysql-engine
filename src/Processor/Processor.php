@@ -6,6 +6,7 @@ use Vimeo\MysqlEngine\Query\Expression\BinaryOperatorExpression;
 use Vimeo\MysqlEngine\Query\Expression\ColumnExpression;
 use Vimeo\MysqlEngine\Query\Expression\ConstantExpression;
 use Vimeo\MysqlEngine\Query\Expression\NamedPlaceholderExpression;
+use Vimeo\MysqlEngine\Query\Expression\VariableExpression;
 use Vimeo\MysqlEngine\Query\LimitClause;
 use Vimeo\MysqlEngine\Schema\Column\IntegerColumn;
 use Vimeo\MysqlEngine\Schema\TableDefinition;
@@ -172,8 +173,15 @@ abstract class Processor
         $set_clauses = [];
 
         foreach ($set_clause as $expression) {
-            if (!$expression->left instanceof ColumnExpression || $expression->right === null) {
-                throw new \TypeError('Failed assertion');
+            $variable = null;
+
+            if ($expression->left instanceof BinaryOperatorExpression && $expression->left->right instanceof VariableExpression) {
+                $variable         = $expression->left->right;
+                $expression->left = $expression->left->left;
+            } else {
+                if (! $expression->left instanceof ColumnExpression || $expression->right === null) {
+                    throw new \TypeError('Failed assertion');
+                }
             }
 
             $column = $expression->left->columnName;
@@ -182,7 +190,7 @@ abstract class Processor
                 throw new ProcessorException("Invalid update column {$column}");
             }
 
-            $set_clauses[] = ['column' => $column, 'expression' => $expression->right];
+            $set_clauses[] = ['column' => $column, 'expression' => $expression->right, 'variable' => $variable];
         }
 
         $update_count = 0;
@@ -211,6 +219,10 @@ abstract class Processor
                         $update_row,
                         $original_result
                     );
+
+                    if($clause['variable']) {
+                        $scope->variables[$clause['variable']->variableName] = $new_value;
+                    }
 
                     if ($new_value !== $existing_value) {
                         $row[$clause['column']] = $new_value;

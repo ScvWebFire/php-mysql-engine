@@ -177,7 +177,7 @@ trait FakePdoStatementTrait
                 try {
                     $raw_result = Processor\SelectProcessor::process(
                         $this->conn,
-                        new Processor\Scope(array_merge($params ?? [], $this->boundValues)),
+                        new Processor\Scope(array_merge($params ?? [], $this->boundValues), $this->conn->getvariables()),
                         $parsed_query
                     );
                 } catch (Processor\ProcessorException $runtime_exception) {
@@ -234,7 +234,7 @@ trait FakePdoStatementTrait
             case Query\UpdateQuery::class:
                 $this->affectedRows = Processor\UpdateProcessor::process(
                     $this->conn,
-                    new Processor\Scope(array_merge($params ?? [], $this->boundValues)),
+                    new Processor\Scope(array_merge($params ?? [], $this->boundValues), $this->conn->getVariables()),
                     $parsed_query
                 );
 

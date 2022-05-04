@@ -37,6 +37,11 @@ trait FakePdoTrait
     public $strict_mode = false;
 
     /**
+     * @var array
+     */
+    private $variables = [];
+
+    /**
      * @var ?string
      * @readonly
      */
@@ -219,5 +224,15 @@ trait FakePdoTrait
     public function errorInfo(): array
     {
         return ['00000', 0, 'PHP MySQL Engine: errorInfo() not supported.'];
+    }
+
+    public function getVariables()
+    {
+        return $this->variables;
+    }
+
+    public function setVariables(array $variables)
+    {
+        $this->variables = $variables;
     }
 }

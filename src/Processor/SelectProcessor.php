@@ -646,6 +646,8 @@ final class SelectProcessor extends Processor
             }
         }
 
+        $conn->setVariables($scope->variables);
+
         return new QueryResult($rows, $columns);
     }
 }

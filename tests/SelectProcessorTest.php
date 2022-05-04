@@ -71,6 +71,51 @@ class SelectProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testSelectProcessorSetsVariableOnConnection()
+    {
+        $query = 'SELECT @testvariable := \'foo\';';
+
+        $select_query = \Vimeo\MysqlEngine\Parser\SQLParser::parse($query);
+
+        $this->assertInstanceOf(SelectQuery::class, $select_query);
+
+        $conn = self::getPdo('mysql:foo');
+
+        $this->assertcount(0, $conn->getVariables());
+
+        \Vimeo\MysqlEngine\Processor\SelectProcessor::process(
+                $conn,
+                new \Vimeo\MysqlEngine\Processor\Scope([]),
+                $select_query,
+                null
+            );
+
+        $this->assertSame('foo', $conn->getVariables()['testvariable']);
+    }
+
+    public function testSelectProcessorReturnsEarlierSetVariable()
+    {
+        $query = 'SELECT @testvariable;';
+
+        $select_query = \Vimeo\MysqlEngine\Parser\SQLParser::parse($query);
+
+        $conn = self::getPdo('mysql:foo');
+
+        $this->assertcount(0, $conn->getVariables());
+
+        $conn->setVariables(['testvariable' => 'foo']);
+
+        $this->assertSame(
+            [['@testvariable' => 'foo']],
+            \Vimeo\MysqlEngine\Processor\SelectProcessor::process(
+                $conn,
+                new \Vimeo\MysqlEngine\Processor\Scope([], $conn->getVariables()),
+                $select_query,
+                null
+            )->rows
+        );
+    }
+
     private static function getPdo(string $connection_string) : \PDO
     {
         if (\PHP_MAJOR_VERSION === 8) {
