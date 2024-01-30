@@ -74,6 +74,7 @@ trait FakePdoStatementTrait
      * @param int $type
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function bindValue($key, $value, $type = \PDO::PARAM_STR) : bool
     {
         if (\is_string($key) && $key[0] !== ':') {
@@ -99,6 +100,7 @@ trait FakePdoStatementTrait
      * @param mixed $driverOptions
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function bindParam($key, &$value, $type = PDO::PARAM_STR, $maxLength = null, $driverOptions = null): bool
     {
         if (\is_string($key) && $key[0] !== ':') {
@@ -331,6 +333,7 @@ trait FakePdoStatementTrait
      * @param int $cursor_orientation
      * @param int $cursor_offset
      */
+    #[\ReturnTypeWillChange]
     public function fetch(
         $fetch_style = -123,
         $cursor_orientation = \PDO::FETCH_ORI_NEXT,
@@ -391,6 +394,7 @@ trait FakePdoStatementTrait
      * @param int $column
      * @return null|scalar
      */
+    #[\ReturnTypeWillChange]
     public function fetchColumn($column = 0)
     {
         /** @var array<int, scalar>|false $row */
